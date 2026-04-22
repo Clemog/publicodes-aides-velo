@@ -7642,15 +7642,38 @@ aides . luxembourg:
   titre: Luxembourg
   description: >
     L'État du Luxembourg instaure une prime jusqu'à 600€ pour l'achat d'un vélo
-    mécanique ou électrique (pedelec25) à des fins privées. Cette aide est
-    plafonnée à 50% du prix du vélo hors taxes.
+    mécanique ou électrique (pedelec25), 1000€ pour l'achat d'un vélo cargo, à des fins privées. Cette aide est plafonnée à 50% du prix du vélo hors taxes.
+
+    Les aides pour l'achat d'un vélo classique (électrique ou non) sont réservées aux personnes qui bénéficient d’une allocation de vie chère ou d’une prime énergie.
   applicable si:
     toutes ces conditions:
-      - vélo . électrique ou mécanique
       - localisation . pays = 'Luxembourg'
+      - une de ces conditions:
+          - vélo . cargo
+          - toutes ces conditions:
+              - vélo . électrique ou mécanique
+              - revenu fiscal de référence par part <= plafond de ressources par part
   valeur: 50% * vélo . prix . HT
-  plafond: 600€
+  plafond:
+    variations:
+      - si: vélo . cargo
+        alors: 1000€
+      - sinon: 600€
   lien: https://guichet.public.lu/fr/citoyens/transport/transports-individuels/aides-financieres/deduction-mobilite-durable-velo.html
+  dernière mise à jour: 20/04/2026
+  avec:
+    plafond de ressources par part:
+      valeur: plafond de ressources * 12 mois/an / foyer . personnes
+      unité: €/an
+    plafond de ressources:
+      description: On considère ici les plafonds de revenude la prime énergie, moins restrifs que ceux de l'allocation de vie chère.
+      valeur:
+        variations:
+          - si: foyer . personnes = 1
+            alors: 3388
+          - sinon:
+              valeur: 5082 + (1016 * (foyer . personnes - 2) * 1 €/mois/personne)
+      unité: €/mois
 
 aides . grand besançon:
   remplace: intercommunalité
